@@ -1,0 +1,32 @@
+# Learning TMux:
+0. config file in ~/.tmux.conf
+1. tmux list-sessions
+2. tmux new -s session-name
+3. Ctrl-b d Detach from session
+4. tmux attach -t [session name]
+5. tmux kill-session -t session-name
+# Basic
+0. Ctrl-a <command> => command for tmux
+1. Ctrl-a ? => Binding List
+2. Ctrl-a : => command-prompt
+# Windows (Tabs)
+0. Ctrl-a c => New window
+1. Ctrl-a , => Change window name
+2. Ctrl-a n => Move to the next window
+3. Ctrl-a p => Move to the previous window
+4. Ctrl-a w => Windows List
+5. Ctrl-a No. => Move to the specified window number
+6. Ctrl-a l => Move to the previously selected window
+7. Ctrl-a & => close Window
+# Tiling (split view)
+0. Ctrl-a % => split vertically
+1. Ctrl-a " => split horizontally
+2. Ctrl-a o => Goto next pane (view)
+3. Ctrl-a q => Show pane numbers, when the numbers show up type the key to goto that pane
+4. Ctrl-a { => Move the current pane left
+5. Ctrl-a } => Move the current pane right
+6. Ctrl-a ! => Make a pane its own window
+7. Ctrl-a Space => next-layout
+8. Ctrl-a x => close pane
+
+# 
