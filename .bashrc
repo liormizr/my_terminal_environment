@@ -69,9 +69,8 @@ else
     SUCCESS_PS1="${GREEN}${debian_chroot:+($debian_chroot)}\u@\h:\w\$${NORMAL} "
     FAILER_PS1="${RED}${debian_chroot:+($debian_chroot)}\u@\h:\w\$${NORMAL} "
 	SELECT="if [ \$? = 0 ]; then echo \"${SUCCESS_PS1}\"; else echo \"${FAILER_PS1}\"; fi"
-    PS1="\`${SELECT}\`"
 	# Throw it all together 
-#	PS1="${RESET}${YELLOW}\h${NORMAL} \`${SELECT}\` ${YELLOW}>${NORMAL} "
+    PS1="\`${SELECT}\`"
 fi
 unset color_prompt force_color_prompt
 
@@ -148,3 +147,31 @@ extract () {
         echo "'$1' is not a valid file!"
     fi
 }
+
+export WORKON_HOME=$HOME/work/.virtualenvs
+export PROJECT_HOME=$HOME/work
+source /usr/local/bin/virtualenvwrapper.sh
+
+
+cdconfiguration()
+{
+    cd /home/liorm/work/claw/configurations/$1
+}
+
+__claw_cdconfiguration_completion()
+{
+    COMPREPLY=( $(compgen -W "$(\ls /home/liorm/work/claw/configurations)" -- \
+        "${COMP_WORDS[$COMP_CWORD]}" ) )
+}
+complete -F __claw_cdconfiguration_completion cdconfiguration
+
+export EDITOR=vim
+
+
+GIT_PS1_SHOWCOLORHINTS=true
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUNTRACKEDFILES=true
+GIT_PS1_SHOWUPSTREAM=auto
+source "/usr/lib/git-core/git-sh-prompt"
+
