@@ -1,3 +1,11 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =1
-let g:netrw_dirhist_1='/home/lior/.vim'
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/home/liorm/work/source'
+let g:netrw_dirhist_2='/home/liorm/work/source/cloudify-manager'
+let g:netrw_dirhist_3='/home/liorm/work/source'
+let g:netrw_dirhist_4='/home/liorm/work/source/cloudify-plugins-common'
+let g:netrw_dirhist_5='/home/liorm/work/source/cloudify-dsl-parser'
+let g:netrw_dirhist_6='/home/liorm/work/source/cloudify-dsl-parser/dsl_parser'
+let g:netrw_dirhist_7='/home/liorm/work/source/cloudify-dsl-parser'
+let g:netrw_dirhist_8='/home/liorm/work/source'
+let g:netrw_dirhist_9='/home/liorm/work'

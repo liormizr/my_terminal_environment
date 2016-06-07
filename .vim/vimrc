@@ -7,6 +7,8 @@ filetype on
 filetype plugin on
 filetype indent on
 
+cabbrev E Explore
+
 command -nargs=* Jam make <args>|:clist!
 map <F9> <Esc>:w<CR>:Jam<CR>
 map <F7> <Esc>:w<CR>:Jam test<CR>
