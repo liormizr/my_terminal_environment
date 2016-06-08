@@ -1,5 +1,3 @@
-Git Hook Lambda test 1
-
 # Learning TMux:
 0. config file in ~/.tmux.conf
 1. tmux list-sessions
