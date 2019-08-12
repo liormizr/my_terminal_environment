@@ -1,6 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
+LC_TIME=en_US.UTF-8
 
 # If not running interactively, don't do anything
 case $- in
@@ -133,7 +134,7 @@ extract () {
             *.tar.bz2)   tar xvjf $1    ;;
             *.tar.gz)    tar xvzf $1    ;;
             *.bz2)       bunzip2 $1     ;;
-            *.rar)       unrar x $1       ;;
+            *.rar)       unrar x $1     ;;
             *.gz)        gunzip $1      ;;
             *.tar)       tar xvf $1     ;;
             *.tbz2)      tar xvjf $1    ;;
@@ -148,24 +149,29 @@ extract () {
     fi
 }
 
-export WORKON_HOME=$HOME/work/.virtualenvs
-export PROJECT_HOME=$HOME/work
-source /usr/local/bin/virtualenvwrapper.sh
-
-
-cdconfiguration()
-{
-    cd /home/liorm/work/claw/configurations/$1
+stagingVPN () {
+    pushd ~/work/VPN/Lior_Mizrahi/Staging/root/export/lior.mizrahi/ > /dev/null;
+        sudo openvpn --config client.ovpn;
+    popd > /dev/null
 }
 
-__claw_cdconfiguration_completion()
-{
-    COMPREPLY=( $(compgen -W "$(\ls /home/liorm/work/claw/configurations)" -- \
-        "${COMP_WORDS[$COMP_CWORD]}" ) )
+productionVPN () {
+    pushd ~/work/VPN/Lior_Mizrahi/Production/root/export/lior.mizrahi/ > /dev/null;
+        sudo openvpn --config client.ovpn
+    popd > /dev/null
 }
-complete -F __claw_cdconfiguration_completion cdconfiguration
+
+export PROJECT_HOME=$HOME/bluevine
+export WORKSPACE=$PROJECT_HOME/sources
+eval "$(_RUNNER_COMPLETE=source runner)"
+eval "$(_DEV_RUNNER_COMPLETE=source dev-runner)"
+
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3.6
+source /home/lior/.local/bin/virtualenvwrapper.sh
 
 export EDITOR=vim
+
+# export VAGRANT_CWD=$HOME/work/development/src/
 
 
 GIT_PS1_SHOWCOLORHINTS=true
@@ -175,3 +181,17 @@ GIT_PS1_SHOWUNTRACKEDFILES=true
 GIT_PS1_SHOWUPSTREAM=auto
 source "/usr/lib/git-core/git-sh-prompt"
 
+_pipenv_completion() {
+    local IFS=$'\t'
+    COMPREPLY=( $( env COMP_WORDS="${COMP_WORDS[*]}" \
+                                COMP_CWORD=$COMP_CWORD \
+                                _PIPENV_COMPLETE=complete-bash $1 ) )
+    return 0
+}
+
+complete -F _pipenv_completion -o default pipenv
+eval "$(register-python-argcomplete r2d2)"
+
+
+# added by travis gem
+[ -f /home/lior/.travis/travis.sh ] && source /home/lior/.travis/travis.sh
