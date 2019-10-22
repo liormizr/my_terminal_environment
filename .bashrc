@@ -1,7 +1,9 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
-LC_TIME=en_US.UTF-8
+export LC_TIME=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 # If not running interactively, don't do anything
 case $- in
@@ -31,58 +33,20 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-#force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
-fi
-
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-	RESET="\[\017\]"
-	NORMAL="\[\033[0m\]"
-	RED="\[\033[31;1m\]"
-	GREEN="\[\033[32;1m\]"
-	YELLOW="\[\033[33;1m\]"
-	WHITE="\[\033[37;1m\]"
-	SMILEY="${WHITE}:)${NORMAL}"
-	FROWNY="${RED}:(${NORMAL}"
-    SUCCESS_PS1="${GREEN}${debian_chroot:+($debian_chroot)}\u@\h:\w\$${NORMAL} "
-    FAILER_PS1="${RED}${debian_chroot:+($debian_chroot)}\u@\h:\w\$${NORMAL} "
-	SELECT="if [ \$? = 0 ]; then echo \"${SUCCESS_PS1}\"; else echo \"${FAILER_PS1}\"; fi"
-	# Throw it all together 
-    PS1="\`${SELECT}\`"
-fi
-unset color_prompt force_color_prompt
-
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+RESET="\[\017\]"
+NORMAL="\[\033[0m\]"
+RED="\[\033[31;1m\]"
+GREEN="\[\033[32;1m\]"
+YELLOW="\[\033[33;1m\]"
+WHITE="\[\033[37;1m\]"
+BLUE="\[\033[01;34m\]"
+SMILEY="${WHITE}:)${NORMAL}"
+FROWNY="${RED}:(${NORMAL}"
+SUCCESS_PS1="${GREEN}\u:${BLUE}\w\$${NORMAL} "
+FAILER_PS1="${RED}\u:${BLUE}\w\$${NORMAL} "
+SELECT="if [ \$? = 0 ]; then echo \"${SUCCESS_PS1}\"; else echo \"${FAILER_PS1}\"; fi"
+# Throw it all together 
+PS1="\`${SELECT}\`"
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -97,7 +61,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some more ls aliases
-alias ll='ls -alF'
+alias ll='ls -alFG'
 alias la='ls -A'
 alias l='ls -CF'
 
@@ -118,16 +82,8 @@ if [ -f ~/.aliases ]; then
     . ~/.aliases
 fi
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
+. /usr/local/etc/bash_completion.d/git-completion.bash
+
 extract () {
     if [ -f $1 ] ; then
         case $1 in
@@ -150,36 +106,44 @@ extract () {
 }
 
 stagingVPN () {
-    pushd ~/work/VPN/Lior_Mizrahi/Staging/root/export/lior.mizrahi/ > /dev/null;
-        sudo openvpn --config client.ovpn;
-    popd > /dev/null
+  startVPN Staging
 }
+
 
 productionVPN () {
-    pushd ~/work/VPN/Lior_Mizrahi/Production/root/export/lior.mizrahi/ > /dev/null;
-        sudo openvpn --config client.ovpn
-    popd > /dev/null
+  startVPN Production
 }
 
-export PROJECT_HOME=$HOME/bluevine
+
+startVPN() {
+  VPN_ENV=$1
+  VPN_STATUS=$(osascript -e 'tell application "Tunnelblick"' -e 'get state of configurations' -e 'end tell')
+  if [[ $VPN_STATUS == *"CONNECTED"* ]]; then
+    VPN_ON=$(osascript -e 'tell application "Tunnelblick"' -e 'get name of configuration 1 where state = "CONNECTED"' -e 'end tell')
+    if [[ "$VPN_ON" != "$VPN_ENV" ]] ; then
+      echo "* Switching VPN connections"
+      osascript -e 'tell application "Tunnelblick"' -e "disconnect \"${VPN_ON}\"" -e 'end tell' &>/dev/null
+      # Wait for disconnect to finish before connecting a new one
+      sleep 3
+    fi
+  fi
+  osascript -e 'tell application "Tunnelblick"' -e "connect \"${VPN_ENV}\"" -e 'end tell' &>/dev/null
+  # Wait thread for the connection to come up before trying any new commands.
+  if [[ "$EXECUTED" = "1" ]] ; then
+    while ! osascript -e 'tell application "Tunnelblick"' -e 'get name of configuration 1 where state = "CONNECTED"' -e 'end tell' > /dev/null 2>&1
+      do sleep 1 ; done &
+  fi
+  unset VPN_ON VPN_STATUS VPN_ENV
+}
+
+export PROJECT_HOME=$HOME
 export WORKSPACE=$PROJECT_HOME/sources
 eval "$(_RUNNER_COMPLETE=source runner)"
 eval "$(_DEV_RUNNER_COMPLETE=source dev-runner)"
-
-export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3.6
-source /home/lior/.local/bin/virtualenvwrapper.sh
+eval "$(_QA_COMPLETE=source qa)"
+eval "$(_QA_RUNNER_COMPLETE=source qa-runner)"
 
 export EDITOR=vim
-
-# export VAGRANT_CWD=$HOME/work/development/src/
-
-
-GIT_PS1_SHOWCOLORHINTS=true
-GIT_PS1_SHOWDIRTYSTATE=true
-GIT_PS1_SHOWSTASHSTATE=true
-GIT_PS1_SHOWUNTRACKEDFILES=true
-GIT_PS1_SHOWUPSTREAM=auto
-source "/usr/lib/git-core/git-sh-prompt"
 
 _pipenv_completion() {
     local IFS=$'\t'
@@ -191,7 +155,3 @@ _pipenv_completion() {
 
 complete -F _pipenv_completion -o default pipenv
 eval "$(register-python-argcomplete r2d2)"
-
-
-# added by travis gem
-[ -f /home/lior/.travis/travis.sh ] && source /home/lior/.travis/travis.sh
