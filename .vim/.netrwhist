@@ -1,3 +1,12 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =1
-let g:netrw_dirhist_1='/home/liorm/my_terminal_environment'
+let g:netrw_dirhistcnt =8
+let g:netrw_dirhist_8='/Users/lior/.bluevine'
+let g:netrw_dirhist_7='/Users/lior/sources/rnd_dockers/runner/commands/system'
+let g:netrw_dirhist_6='/Users/lior/sources/rnd_dockers/runner/commands'
+let g:netrw_dirhist_5='/Users/lior/sources/rnd_dockers/compose'
+let g:netrw_dirhist_4='/Users/lior/sources/rnd_dockers/compose/infrastructure'
+let g:netrw_dirhist_3='/Users/lior/sources/rnd_dockers/runner/commands/system'
+let g:netrw_dirhist_2='/Users/lior/sources/rnd_dockers/runner/commands'
+let g:netrw_dirhist_1='/Users/lior/sources/devops_dockerfiles/pgbouncer'
+let g:netrw_dirhist_0='/Users/lior/sources/devops_dockerfiles/exchange_database'
+let g:netrw_dirhist_9='/Users/lior/sources/devops_dockerfiles/base_server'
