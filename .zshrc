@@ -11,7 +11,7 @@ export CLOUDSDK_PYTHON=python3.8
 export NEXUS_CLI_WORKDIR=$HOME/work/nexus-cli/
 export NEXUS_CLI_ROOT_DIR=$NEXUS_CLI_WORKDIR
 export NEXUS_USERNAME=liorm
-export NEXUS_PASSWORD=wGc4UwbhhqK39yTe
+export NEXUS_PASSWORD=
 
 alias ll='ls -alFG'
 alias la='ls -A'
